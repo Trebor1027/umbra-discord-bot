@@ -89,6 +89,109 @@ bot.add_command(limpiar)
 from funciones_basicas.decir_comandos import comandos
 bot.add_command(comandos)
 
+
+#----------------------BANEAR----------------------
+from funciones_basicas.banear import detectar_insultos
+
+@bot.listen("on_message")
+async def controlar_insultos(message):
+    await detectar_insultos(message)
+    
+
+#----------------------ECONOMIA----------------------
+from economia.moneda import saldo, diario, trabajar, ranking
+from economia.transferencia import transferir
+bot.add_command(saldo)
+bot.add_command(diario)
+bot.add_command(trabajar)
+bot.add_command(ranking)
+bot.add_command(transferir)
+
+
+#----------------------TIENDA----------------------
+from economia.tienda import tienda, comprar, inventario
+bot.add_command(tienda)
+bot.add_command(comprar)
+bot.add_command(inventario)
+
+
+#----------------------NIVELES----------------------
+from economia.niveles import nivel, procesar_experiencia
+bot.add_command(nivel)
+@bot.listen("on_message")
+async def sistema_experiencia(message):
+    await procesar_experiencia(message)
+    
+    
+#----------------------RECORDAR----------------------
+from memoria.base_datos import crear_tablas
+from memoria.recordar import recordar
+bot.add_command(recordar)
+crear_tablas()
+
+
+#----------------------CONSULTAR MEMORIA----------------------
+from memoria.consultar import consultar
+bot.add_command(consultar)
+
+
+
+#----------------------OLVIDAR----------------------
+from memoria.olvidar import olvidar
+bot.add_command(olvidar)
+
+
+#----------------------MIS DATOS----------------------
+from memoria.misdatos import misdatos
+bot.add_command(misdatos)
+
+
+#----------------------CONFIGURACION MEMORIA----------------------
+from memoria.configuracion import memoria_auto
+bot.add_command(memoria_auto)
+
+
+#----------------------DETECTAR RECUERDOS----------------------
+from memoria.detector import (
+    detectar_recuerdo,
+    guardar_recuerdo_automatico
+)
+
+@bot.event
+async def on_message(message):
+
+    # Ignorar mensajes de otros bots
+    if message.author.bot:
+        return
+
+    # Ignorar comandos
+    if message.content.startswith("!"):
+        await bot.process_commands(message)
+        return
+
+    # Detectar información relevante
+    resultado = detectar_recuerdo(message.content)
+
+    if resultado:
+        categoria, informacion = resultado
+
+        guardado = guardar_recuerdo_automatico(
+            str(message.author.id),
+            categoria,
+            informacion
+        )
+
+        if guardado:
+            await message.reply(
+                " He aprendido algo nuevo sobre ti."
+            )
+
+    # Mantener funcionando los comandos de Discord
+    await bot.process_commands(message)
+
+
+
 #----------------------EJECUCION----------------------
+
 bot.run(os.environ["DISCORD_TOKEN"])
 

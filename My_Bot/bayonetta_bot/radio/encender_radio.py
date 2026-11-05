@@ -1,3 +1,5 @@
+import asyncio
+
 import discord as DC
 from discord.ext import commands
 
@@ -27,3 +29,4 @@ async def radio(ctx):
     ctx.voice_client.play(DC.FFmpegPCMAudio(url, **opciones), after=al_terminar)
     await enviar_con_gif(ctx, "voy a prender la radio cariño...",
                             "https://media.tenor.com/Of00Up8-_NEAAAAM/bayonetta-bayonetta-2.gif")
+
