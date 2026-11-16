@@ -5,3 +5,5 @@ venv/
 *.log
 .env
 .venv/
+*.db
+datos.json

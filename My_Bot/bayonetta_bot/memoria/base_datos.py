@@ -30,6 +30,17 @@ def crear_tablas():
             memoria_automatica INTEGER DEFAULT 0
         )
     """)
+    # Añadir permiso independiente para usar recuerdos con IA.
+    cursor.execute("PRAGMA table_info(configuracion)")
+    columnas = {
+        columna[1] for columna in cursor.fetchall()
+    }
+
+    if "memoria_ia" not in columnas:
+        cursor.execute("""
+            ALTER TABLE configuracion
+            ADD COLUMN memoria_ia INTEGER NOT NULL DEFAULT 0
+        """)
 
     conexion.commit()
     conexion.close()
